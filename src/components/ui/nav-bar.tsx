@@ -29,44 +29,28 @@ export default function NavBar() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-around h-16 px-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <h1 className="bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent text-xl font-bold">
-              Insta-clone
-            </h1>
-          </Link>
-
-          {/* Navigation Icons */}
+        <div className="flex items-center justify-center h-16 px-4">
+          {/* Navigation Icons Only */}
           <div className="flex items-center space-x-8">
             <Link href="/">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1">
                 <Home className="h-6 w-6" />
-                <span className="text-xs">Home</span>
               </Button>
             </Link>
 
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1" onClick={() => setShowSearch(!showSearch)}>
               <Search className="h-6 w-6" />
-              <span className="text-xs">Search</span>
             </Button>
 
             <Link href="/create">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1">
                 <PlusSquare className="h-6 w-6" />
-                <span className="text-xs">Create</span>
               </Button>
             </Link>
-
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1">
-              <Heart className="h-6 w-6" />
-              <span className="text-xs">Activity</span>
-            </Button>
 
             <Link href="/profile">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1">
                 <User className="h-6 w-6" />
-                <span className="text-xs">Profile</span>
               </Button>
             </Link>
           </div>
