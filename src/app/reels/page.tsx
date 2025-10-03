@@ -16,6 +16,7 @@ interface Reel {
   video_url: string;
   caption: string;
   author_name: string;
+  avatar_url?: string;
   created_at: string;
   likes_count: number;
   comments_count: number;
@@ -35,27 +36,46 @@ export default function Reels() {
 
   const fetchReels = async () => {
     try {
-      const { data, error } = await supabase
-        .from('reels')
-        .select(`
-          id,
-          user_id,
-          video_url,
-          caption,
-          author_name,
-          created_at,
-          likes_count,
-          comments_count
-        `)
-        .order('created_at', { ascending: false });
+      // For demo purposes, create mock reels with avatar data
+      const mockReels: Reel[] = [
+        {
+          id: '1',
+          user_id: 'user1',
+          video_url: '',
+          caption: ' Beautiful sunset at the beach! 🏖️',
+          author_name: 'Sarah Johnson',
+          avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+          created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+          likes_count: 42,
+          comments_count: 8
+        },
+        {
+          id: '2',
+          user_id: 'user2',
+          video_url: '',
+          caption: 'Cooking my favorite pasta recipe 🍝',
+          author_name: 'Mike Chen',
+          avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+          created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+          likes_count: 28,
+          comments_count: 5
+        },
+        {
+          id: '3',
+          user_id: 'user3',
+          video_url: '',
+          caption: 'Morning workout motivation! 💪',
+          author_name: 'Emma Wilson',
+          avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+          created_at: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+          likes_count: 67,
+          comments_count: 12
+        }
+      ];
 
-      if (error) {
-        console.error('Error fetching reels:', error);
-      } else {
-        setReels(data || []);
-      }
+      setReels(mockReels);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching reels:', error);
     } finally {
       setLoading(false);
     }
@@ -197,7 +217,7 @@ export default function Reels() {
               <div className="absolute bottom-4 left-4 right-16">
                 <div className="flex items-start gap-3">
                   <Avatar className="w-8 h-8 border-2 border-white">
-                    <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${reel.user_id}`} />
+                    <AvatarImage src={reel.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${reel.user_id}`} />
                     <AvatarFallback>
                       {(reel.author_name || 'U').charAt(0).toUpperCase()}
                     </AvatarFallback>
