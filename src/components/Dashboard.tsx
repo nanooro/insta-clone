@@ -3,7 +3,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import NavBar from "@/components/ui/nav-bar";
-import CreatePost from "@/components/CreatePost";
 import PostFeed from "@/components/PostFeed";
 import UserSuggestions from "@/components/UserSuggestions";
 

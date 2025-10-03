@@ -69,9 +69,9 @@ export default function Signup() {
     if (data.user) {
       console.log("Signup successful:", data.user.email);
 
-      // Create profile entry
+      // Create profile entry immediately
       try {
-        await supabase.from('profiles').insert({
+        const { error: profileError } = await supabase.from('profiles').upsert({
           id: data.user.id,
           email: formData.email,
           full_name: formData.fullName,
@@ -79,10 +79,17 @@ export default function Signup() {
           bio: '',
           website: '',
           avatar_url: ''
+        }, {
+          onConflict: 'id'
         });
+        
+        if (profileError) {
+          console.error("Error creating profile:", profileError);
+        } else {
+          console.log("Profile created successfully for:", formData.email);
+        }
       } catch (profileError) {
         console.error("Error creating profile:", profileError);
-        // Don't fail signup if profile creation fails
       }
 
       toast.success("Account created! Check your email for verification link.");
@@ -147,7 +154,6 @@ export default function Signup() {
             className="bg-white"
           />
           <div className="relative">
-            name="password"
             <Input
               name="password"
               type={showPassword ? "text" : "password"}
@@ -164,8 +170,8 @@ export default function Signup() {
             >
               {showPassword ? "ud83dude48" : "ud83dudc41ufe0f"}
             </button>
+          </div>
           <div className="relative">
-            type="password"
             <Input
               name="confirmPassword"
               type={showPassword ? "text" : "password"}
@@ -183,21 +189,6 @@ export default function Signup() {
               {showPassword ? "ud83dude48" : "ud83dudc41ufe0f"}
             </button>
           </div>
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="bg-white"
-          />
-          <Input
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-            className="bg-white"
-          />
 
           {error && (
             <div className="w-full p-3 bg-red-50 border border-red-200 rounded-lg">
