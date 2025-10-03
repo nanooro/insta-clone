@@ -27,12 +27,12 @@ export default function TopNavBar() {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              <MessageCircle className="h-6 w-6" />
-            </Button>
 
             <Button variant="ghost" size="sm">
               <Heart className="h-6 w-6" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <MessageCircle className="h-6 w-6" />
             </Button>
           </div>
         </div>
