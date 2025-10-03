@@ -31,30 +31,31 @@ export default function NavBar() {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-center h-16 px-4">
           {/* Navigation Icons - Instagram Style */}
-          <div className="flex items-center justify-center space-x-6">
+          <div className="flex items-center justify-center space-x-6 scale-150  ">
+            
             <Link href="/">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
-                <Home className="h-7 w-7" />
+                <Home className="h-8 w-8" />
               </Button>
             </Link>
 
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2" onClick={() => setShowSearch(!showSearch)}>
-              <Search className="h-7 w-7" />
+              <Search className="h-8 w-8" />
             </Button>
 
             <Link href="/reels">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
-                <Play className="h-7 w-7" />
+                <Play className="h-8 w-8" />
               </Button>
             </Link>
 
             <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
-              <Heart className="h-7 w-7" />
+              <Heart className="h-8 w-8" />
             </Button>
 
             <Link href="/profile">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
-                <User className="h-7 w-7" />
+                <User className="h-8 w-8" />
               </Button>
             </Link>
           </div>
