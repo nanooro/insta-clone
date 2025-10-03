@@ -11,34 +11,13 @@ export default function Dashboard() {
   const { user, signOut } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NavBar />
-
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">Insta-clone</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              Welcome, {user?.user_metadata?.full_name || user?.email}
-            </span>
-            <Button variant="outline" onClick={signOut}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Left Sidebar - Create Post */}
-          <div className="lg:col-span-1">
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Main Feed */}
+          <div className="lg:col-span-2 space-y-6">
             <CreatePost />
-          </div>
-
-          {/* Main Feed */}
-          <div className="lg:col-span-2">
             <PostFeed />
           </div>
 
@@ -48,6 +27,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      <NavBar />
     </div>
   );
 }

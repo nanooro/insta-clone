@@ -8,20 +8,19 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 export default function Auth() {
-
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,7 +30,7 @@ export default function Auth() {
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.email,
-      password: formData.password
+      password: formData.password,
     });
 
     if (error) {
@@ -44,8 +43,12 @@ export default function Auth() {
 
     if (data.user) {
       console.log("Login successful:", data.user.email);
-      toast.success("Welcome back, " + (data.user.user_metadata?.full_name || data.user.email) + "!");
-      
+      toast.success(
+        "Welcome back, " +
+          (data.user.user_metadata?.full_name || data.user.email) +
+          "!"
+      );
+
       // Small delay to show toast, then redirect
       setTimeout(() => {
         window.location.href = "/";
@@ -82,7 +85,6 @@ export default function Auth() {
             className="bg-white"
           />
           <div className="relative">
-
             <Input
               name="password"
               type={showPassword ? "text" : "password"}
@@ -110,7 +112,11 @@ export default function Auth() {
 
           <Button
             type="submit"
-            className={`w-full ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+            className={`w-full ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
             disabled={loading}
           >
             {loading ? (
