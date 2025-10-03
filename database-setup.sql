@@ -20,54 +20,43 @@ CREATE TABLE IF NOT EXISTS followers (
   UNIQUE(follower_id, following_id)
 );
 
--- Create posts table for user posts
-CREATE TABLE IF NOT EXISTS posts (
+-- Create reels table for short video content
+CREATE TABLE IF NOT EXISTS reels (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  image_url TEXT NOT NULL,
+  video_url TEXT NOT NULL,
   caption TEXT,
+  author_name TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  likes_count INTEGER DEFAULT 0,
+  comments_count INTEGER DEFAULT 0
 );
 
--- Create likes table for post likes
-CREATE TABLE IF NOT EXISTS likes (
+-- Create reel_likes table for reel likes
+CREATE TABLE IF NOT EXISTS reel_likes (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+  reel_id UUID REFERENCES reels(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(user_id, post_id)
+  UNIQUE(user_id, reel_id)
 );
 
--- Create comments table for post comments
-CREATE TABLE IF NOT EXISTS comments (
+-- Create reel_comments table for reel comments
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+  reel_id UUID REFERENCES reels(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+-- Enable RLS on reels tables
+ALTER TABLE reels ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reel_likes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reel_comments ENABLE ROW LEVEL SECURITY;
 
--- Enable Row Level Security (RLS)
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE followers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE likes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
-
--- Create policies for profiles
-CREATE POLICY "Public profiles are viewable by everyone" ON profiles
-  FOR SELECT USING (true);
-
-CREATE POLICY "Users can insert their own profile" ON profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "Users can update their own profile" ON profiles
-  FOR UPDATE USING (auth.uid() = id);
-
--- Create policies for followers
-CREATE POLICY "Users can view all followers" ON followers
+-- Create policies for reels
+CREATE POLICY "Reels are viewable by everyone" ON reels
   FOR SELECT USING (true);
 
 CREATE POLICY "Users can follow/unfollow others" ON followers

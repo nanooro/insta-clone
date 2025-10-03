@@ -5,78 +5,119 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabaseClient";
-import { User } from "@supabase/supabase-js";
+import { User, Search, Hash, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 
 interface SearchUsersProps {
   onClose?: () => void;
 }
 
+type SearchTab = 'users' | 'posts' | 'hashtags';
+
+interface UserProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  username: string;
+  avatar_url?: string;
+}
+
+interface Post {
+  id: string;
+  user_id: string;
+  image_url: string;
+  caption: string;
+  author_name: string;
+  created_at: string;
+}
+
 export default function SearchUsers({ onClose }: SearchUsersProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [activeTab, setActiveTab] = useState<SearchTab>('users');
+  const [searchResults, setSearchResults] = useState<{
+    users: UserProfile[];
+    posts: Post[];
+    hashtags: string[];
+  }>(
+    {
+      users: [],
+      posts: [],
+      hashtags: []
+    }
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const searchUsers = async () => {
+    const searchContent = async () => {
       if (!searchQuery.trim()) {
-        setSearchResults([]);
+        setSearchResults({ users: [], posts: [], hashtags: [] });
         return;
       }
 
       setLoading(true);
       try {
-        // First, ensure we have the current user's profile
-        const { data: { user: currentUser } } = await supabase.auth.getUser();
-        
-        if (!currentUser) {
-          setSearchResults([]);
-          return;
-        }
-
-        // For demo purposes, let's create a simple search that works with existing users
-        // In a real app, you'd want to use the admin API or have a search index
-        const { data: profiles, error: profilesError } = await supabase
+        // Search users
+        const { data: profiles } = await supabase
           .from('profiles')
           .select('*')
           .or(`email.ilike.%${searchQuery}%,full_name.ilike.%${searchQuery}%,username.ilike.%${searchQuery}%`)
-          .limit(10);
+          .limit(5);
 
-        if (profilesError && profilesError.code !== 'PGRST116') { // PGRST116 = table doesn't exist
-          console.error('Profiles search error:', profilesError);
-        }
-        
-        // If profiles table doesn't exist or is empty, we'll need to work differently
-        if (!profiles || profiles.length === 0) {
-          // For now, return empty results but this should be fixed by ensuring
-          // the profiles table is populated when users sign up
-          console.log('No profiles found, ensure profiles table is populated');
-        }
-        
-        setSearchResults(profiles || []);
+        // Search posts
+        const { data: posts } = await supabase
+          .from('posts')
+          .select('*')
+          .ilike('caption', `%${searchQuery}%`)
+          .limit(5);
+
+        // Generate hashtag suggestions based on search query
+        const hashtags = generateHashtagSuggestions(searchQuery);
+
+        setSearchResults({
+          users: profiles || [],
+          posts: posts || [],
+          hashtags: hashtags
+        });
       } catch (error) {
         console.error("Search error:", error);
-        console.error("Error details:", {
-          message: error instanceof Error ? error.message : 'Unknown error',
-          stack: error instanceof Error ? error.stack : 'No stack',
-          query: searchQuery
-        });
-        setSearchResults([]);
       }
       setLoading(false);
     };
 
-    const debounceTimer = setTimeout(searchUsers, 300);
+    const debounceTimer = setTimeout(searchContent, 300);
     return () => clearTimeout(debounceTimer);
   }, [searchQuery]);
 
+  const generateHashtagSuggestions = (query: string): string[] => {
+    const baseHashtags = [
+      'instagram', 'photo', 'art', 'travel', 'food', 'fashion',
+      'nature', 'music', 'fitness', 'technology', 'love', 'happy'
+    ];
+
+    return baseHashtags
+      .filter(tag => tag.toLowerCase().includes(query.toLowerCase().replace('#', '')))
+      .slice(0, 5);
+  };
+
+  const getTabIcon = (tab: SearchTab) => {
+    switch (tab) {
+      case 'users':
+        return <User className="w-4 h-4" />;
+      case 'posts':
+        return <ImageIcon className="w-4 h-4" />;
+      case 'hashtags':
+        return <Hash className="w-4 h-4" />;
+    }
+  };
+
   return (
-    <div className="w-full max-w-md">
-      <div className="relative">
+    <div className="w-full max-w-lg">
+      <div className="relative mb-4">
         <Input
           type="text"
-          placeholder="Search users..."
+          placeholder="Search users, posts, hashtags..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pr-10"
@@ -92,39 +133,123 @@ export default function SearchUsers({ onClose }: SearchUsersProps) {
         )}
       </div>
 
+      {/* Search Tabs */}
+      <div className="flex gap-1 mb-4 bg-gray-100 rounded-lg p-1">
+        {(['users', 'posts', 'hashtags'] as SearchTab[]).map((tab) => (
+          <Button
+            key={tab}
+            variant={activeTab === tab ? "default" : "ghost"}
+            size="sm"
+            className={`flex-1 ${activeTab === tab ? 'bg-white' : ''}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {getTabIcon(tab)}
+            <span className="ml-1 capitalize">{tab}</span>
+          </Button>
+        ))}
+      </div>
+
       {searchQuery && (
-        <Card className="mt-2 p-2 max-h-80 overflow-y-auto">
+        <Card className="max-h-96 overflow-y-auto">
           {loading ? (
-            <div className="p-4 text-center text-gray-500">Searching...</div>
-          ) : searchResults.length > 0 ? (
-            <div className="space-y-2">
-              {searchResults.map((user) => (
-                <Link
-                  key={user.id}
-                  href={`/profile/${user.id}`}
-                  onClick={onClose}
-                  className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors"
-                >
-                  <Avatar className="w-10 h-10">
-                    <AvatarImage src={user.user_metadata?.avatar_url} />
-                    <AvatarFallback>
-                      {(user.user_metadata?.full_name || user.email || "U")[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="font-medium text-sm">
-                      {user.user_metadata?.full_name || "Unknown User"}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      @{user.user_metadata?.username || user.email}
-                    </div>
-                  </div>
-                </Link>
-              ))}
+            <div className="p-4 text-center text-gray-500">
+              <Search className="w-6 h-6 mx-auto mb-2 animate-pulse" />
+              Searching...
             </div>
           ) : (
-            <div className="p-4 text-center text-gray-500">
-              No users found matching "{searchQuery}"
+            <div className="p-2">
+              {activeTab === 'users' && (
+                <div className="space-y-2">
+                  {searchResults.users.length > 0 ? (
+                    searchResults.users.map((user) => (
+                      <Link
+                        key={user.id}
+                        href={`/profile/${user.id}`}
+                        onClick={onClose}
+                        className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src={user.avatar_url} />
+                          <AvatarFallback>
+                            {(user.full_name || user.email || "U")[0].toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="font-medium">
+                            {user.full_name || "Unknown User"}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            @{user.username || user.email}
+                          </div>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-gray-500">
+                      No users found matching "{searchQuery}"
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'posts' && (
+                <div className="space-y-2">
+                  {searchResults.posts.length > 0 ? (
+                    searchResults.posts.map((post) => (
+                      <Link
+                        key={post.id}
+                        href={`/posts`}
+                        onClick={onClose}
+                        className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
+                          <ImageIcon className="w-6 h-6 text-gray-400" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm line-clamp-2">
+                            {post.caption || "No caption"}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            by {post.author_name}
+                          </div>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-gray-500">
+                      No posts found matching "{searchQuery}"
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'hashtags' && (
+                <div className="space-y-2">
+                  {searchResults.hashtags.length > 0 ? (
+                    searchResults.hashtags.map((hashtag) => (
+                      <Link
+                        key={hashtag}
+                        href={`/search?q=${encodeURIComponent('#' + hashtag)}`}
+                        onClick={onClose}
+                        className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Hash className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <div className="flex-1">
+                          <Badge variant="secondary" className="text-sm">
+                            #{hashtag}
+                          </Badge>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-gray-500">
+                      No hashtags found matching "{searchQuery}"
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </Card>

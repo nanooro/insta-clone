@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Camera, Save, User, ArrowLeft } from "lucide-react";
+import { Settings, Plus } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
@@ -133,13 +133,20 @@ export default function Profile() {
     <div className="min-h-screen">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link href="/">
+              <Button variant="ghost" size="sm">
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            </Link>
+            <h1 className="text-lg font-semibold">Profile</h1>
+          </div>
+          <Link href="/settings">
             <Button variant="ghost" size="sm">
-              <ArrowLeft className="w-4 h-4" />
+              <Settings className="w-4 h-4" />
             </Button>
           </Link>
-          <h1 className="text-lg font-semibold">Profile</h1>
         </div>
       </div>
 
@@ -174,6 +181,31 @@ export default function Profile() {
             <div>
               <h2 className="text-xl font-semibold">{profile.full_name || "No name"}</h2>
               <p className="text-gray-600">@{profile.username || "No username"}</p>
+            </div>
+          </div>
+
+          {/* Highlights Section */}
+          <div className="mb-6">
+            <div className="flex items-center gap-4 overflow-x-auto pb-2">
+              {/* Add Story Button */}
+              <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center border-2 border-gray-300 hover:bg-gray-300 transition-colors cursor-pointer">
+                  <Plus className="w-6 h-6 text-gray-600" />
+                </div>
+                <span className="text-xs text-gray-600">Add Story</span>
+              </div>
+
+              {/* Mock Highlights */}
+              {['Travel', 'Food', 'Art', 'Fitness'].map((highlight, index) => (
+                <div key={highlight} className="flex flex-col items-center gap-1 flex-shrink-0 cursor-pointer">
+                  <div className={`w-16 h-16 rounded-full p-0.5 ${index === 0 ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-gradient-to-r from-blue-500 to-cyan-500'}`}>
+                    <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
+                      <span className="text-xs font-semibold text-gray-700">{highlight[0]}</span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-600 truncate max-w-16">{highlight}</span>
+                </div>
+              ))}
             </div>
           </div>
 
