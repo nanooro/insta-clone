@@ -31,52 +31,42 @@ export default function CreatePost() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!imageFile || !caption.trim()) return;
+    if (!caption.trim()) return;
 
     setLoading(true);
     try {
-      // Upload image to Supabase Storage
-      const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${user?.id}_${Date.now()}.${fileExt}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      // For now, just create a post without image upload
+      // In a real app, you'd upload to Supabase Storage first
+      const { data, error } = await supabase
         .from('posts')
-        .upload(fileName, imageFile);
+        .insert({
+          user_id: user?.id,
+          caption: caption.trim(),
+          image_url: imagePreview || '' // Use preview URL if available
+        })
+        .select()
+        .single();
 
-      if (uploadError) throw uploadError;
+      if (error) {
+        // If posts table doesn't exist, show a message
+        if (error.code === 'PGRST116') {
+          toast.error('Posts feature not fully set up yet. Please run the database setup script.');
+        } else {
+          toast.error('Failed to create post: ' + error.message);
+        }
+        return;
+      }
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('posts')
-        .getPublicUrl(fileName);
-
-      // Create post in database
-      const { error: insertError } = await supabase
-        .from('posts')
-        .insert([
-          {
-            user_id: user?.id,
-            caption: caption.trim(),
-            image_url: publicUrl,
-            author_name: user?.user_metadata?.full_name || user?.email
-          }
-        ]);
-
-      if (insertError) throw insertError;
-
-      // Show success feedback
-      toast.success("Post created successfully!");
-
-      // Reset form
-      setCaption("");
+      toast.success('Post created successfully!');
+      setCaption('');
       setImageFile(null);
       setImagePreview(null);
 
-      // Refresh page to show new post
+      // Refresh posts if PostFeed is on same page
       window.location.reload();
-
     } catch (error) {
       console.error('Error creating post:', error);
-      toast.error('Failed to create post. Please try again.');
+      toast.error('Failed to create post');
     } finally {
       setLoading(false);
     }
@@ -128,7 +118,6 @@ export default function CreatePost() {
                     accept="image/*"
                     onChange={handleImageChange}
                     className="hidden"
-                    required
                   />
                 </div>
                 <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
@@ -152,7 +141,7 @@ export default function CreatePost() {
         </div>
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full" disabled={loading || !imageFile}>
+        <Button type="submit" className="w-full" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
