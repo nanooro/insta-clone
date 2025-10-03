@@ -31,8 +31,7 @@ export default function NavBar() {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-center h-16 px-4">
           {/* Navigation Icons - Instagram Style */}
-          <div className="flex items-center justify-center space-x-6 scale-150  ">
-            
+          <div className="flex items-center justify-center space-x-6">
             <Link href="/">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
                 <Home className="h-8 w-8" />
@@ -43,9 +42,9 @@ export default function NavBar() {
               <Search className="h-8 w-8" />
             </Button>
 
-            <Link href="/reels">
+            <Link href="/create">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
-                <Play className="h-8 w-8" />
+                <PlusSquare className="h-8 w-8" />
               </Button>
             </Link>
 
