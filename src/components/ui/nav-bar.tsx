@@ -31,7 +31,7 @@ export default function NavBar() {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-center h-16 px-4">
           {/* Navigation Icons Only */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-8 scale-150">
             <Link href="/">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1">
                 <Home className="h-6 w-6" />
