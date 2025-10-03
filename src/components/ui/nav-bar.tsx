@@ -31,7 +31,7 @@ export default function NavBar() {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-center h-16 px-4">
           {/* Navigation Icons - Instagram Style */}
-          <div className="flex items-center justify-center space-x-6">
+          <div className="flex items-center justify-center space-x-6 scale-150">
             <Link href="/">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
                 <Home className="h-8 w-8" />
@@ -48,9 +48,6 @@ export default function NavBar() {
               </Button>
             </Link>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
-              <Heart className="h-8 w-8" />
-            </Button>
 
             <Link href="/profile">
               <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
