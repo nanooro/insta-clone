@@ -30,32 +30,57 @@ export default function NavBar() {
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-center h-16 px-4">
-          {/* Navigation Icons - Instagram Style */}
           <div className="flex items-center justify-center space-x-6 scale-150">
             <Link href="/">
-              <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex flex-col items-center gap-1 p-2"
+              >
                 <Home className="h-8 w-8" />
               </Button>
             </Link>
 
-            <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2" onClick={() => setShowSearch(!showSearch)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex flex-col items-center gap-1 p-2"
+              onClick={() => setShowSearch(!showSearch)}
+            >
               <Search className="h-8 w-8" />
             </Button>
 
             <Link href="/create">
-              <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex flex-col items-center gap-1 p-2"
+              >
                 <PlusSquare className="h-8 w-8" />
               </Button>
             </Link>
 
+            <Link href="/reels">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex flex-col items-center gap-1 p-2"
+              >
+                <Play className="h-8 w-8" />
+              </Button>
+            </Link>
 
             <Link href="/profile">
-              <Button variant="ghost" size="sm" className="flex flex-col items-center gap-1 p-2">
+              <Button
+                size="sm"
+                className="flex flex-col items-center gap-1 p-2"
+              >
                 <User className="h-8 w-8" />
               </Button>
             </Link>
           </div>
         </div>
+        {showSearch && <SearchUsers />}
       </div>
     </div>
   );
