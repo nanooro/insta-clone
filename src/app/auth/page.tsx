@@ -83,7 +83,7 @@ export default function Auth() {
 
             <Input
               name="password"
-              type={showPassword ? "text" : "password"}word ? "text" : "password"}
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
@@ -95,7 +95,7 @@ export default function Auth() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
-              showPassword ? "D83dDe48" : "D83dDc41Fe0f"
+              {showPassword ? "🙈" : "👁️"}
             </button>
           </div>
           {error && (
