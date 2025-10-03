@@ -35,6 +35,13 @@ export default function CreatePost() {
 
     setLoading(true);
     try {
+      // Get user profile for author_name
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user?.id)
+        .single();
+
       // For now, just create a post without image upload
       // In a real app, you'd upload to Supabase Storage first
       const { data, error } = await supabase
@@ -42,7 +49,8 @@ export default function CreatePost() {
         .insert({
           user_id: user?.id,
           caption: caption.trim(),
-          image_url: imagePreview || '' // Use preview URL if available
+          image_url: imagePreview || '', // Use preview URL if available
+          author_name: profile?.full_name || user?.email || 'Unknown'
         })
         .select()
         .single();
