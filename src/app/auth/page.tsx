@@ -80,16 +80,25 @@ export default function Auth() {
             required
             className="bg-white"
           />
-          <Input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="bg-white"
-          />
+          <div className="relative">
 
+            <Input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="bg-white pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? "ud83dude48" : "ud83dudc41ufe0f"}
+            </button>
+          </div>
           {error && (
             <div className="w-full p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-600 text-sm text-center font-medium">

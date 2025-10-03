@@ -19,11 +19,16 @@ export default function Home() {
     // Only redirect if we're sure the user is not authenticated
     const checkAuth = async () => {
       setLoading(true);
+      
+      // Wait for auth state to settle
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       if (!user && !session) {
-        // Add a small delay to ensure auth state is properly loaded
+        // Double-check with fresh session call
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         if (!currentSession) {
           router.push("/auth");
+          return;
         }
       }
       setLoading(false);

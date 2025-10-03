@@ -19,6 +19,7 @@ export default function Signup() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -145,9 +146,43 @@ export default function Signup() {
             onChange={handleChange}
             className="bg-white"
           />
-          <Input
+          <div className="relative">
             name="password"
+            <Input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="bg-white pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? "ud83dude48" : "ud83dudc41ufe0f"}
+            </button>
+          <div className="relative">
             type="password"
+            <Input
+              name="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              placeholder="Confirm password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              className="bg-white pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? "ud83dude48" : "ud83dudc41ufe0f"}
+            </button>
+          </div>
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
