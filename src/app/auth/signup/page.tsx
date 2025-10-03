@@ -54,7 +54,8 @@ export default function Signup() {
           full_name: formData.fullName,
           username: formData.username,
           phone: formData.phone
-        }
+        },
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth`
       }
     });
 

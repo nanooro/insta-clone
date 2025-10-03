@@ -24,6 +24,10 @@ const nextConfig = {
     domains: ['api.dicebear.com', 'localhost'],
     formats: ['image/webp', 'image/avif'],
   },
+  // Environment variables for deployment
+  env: {
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+  },
 }
 
 module.exports = nextConfig
