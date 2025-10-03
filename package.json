@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "ESLINT_NO_DEV_ERRORS=true TSC_COMPILE_ON_ERROR=true next build --turbopack",
+    "dev": "next dev",
+    "build": "set ESLINT_NO_DEV_ERRORS=true && set TSC_COMPILE_ON_ERROR=true && next build",
     "start": "next start",
     "lint": "echo 'ESLint disabled'"
   },

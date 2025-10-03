@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import NavBar from "@/components/ui/nav-bar";
 import CreatePost from "@/components/CreatePost";
 import PostFeed from "@/components/PostFeed";
-import { testDatabaseConnection, populateExistingProfiles } from "@/lib/database-utils";
+import UserSuggestions from "@/components/UserSuggestions";
 
 export default function Dashboard() {
   const { user, signOut } = useAuth();
